@@ -21,6 +21,7 @@ function [X_r,Y_r,X_r1,Y_r1,phase]=locating_2D(ABS,PHA,n_spin,x,y)
        
     X_r1=X_r./conv;% convert the scale to um
     Y_r1=Y_r./conv;
+ %% plotting the located NV centers
     figure
     hold on
     for ii=1:1:length(X_r)
@@ -33,6 +34,7 @@ function [X_r,Y_r,X_r1,Y_r1,phase]=locating_2D(ABS,PHA,n_spin,x,y)
     ylabel('y/um');
     title('reconstructed sensor ditribution');
     
+%% plotting reconstructed field ditribution after locating the NV center
     phase=zeros(length(PHA));
     for ii=1:length(X_r)
             phase(X_r(ii),Y_r(ii))=PHA(X_r(ii),Y_r(ii));
@@ -40,12 +42,12 @@ function [X_r,Y_r,X_r1,Y_r1,phase]=locating_2D(ABS,PHA,n_spin,x,y)
     figure
     mesh(x,y,phase)
     grid off
-    %shading interp
+    shading interp
     view(2)
     hold off
     xlabel('x/um');
     ylabel('y/um');
-    title('reconstructed field ditribution');
+    title('reconstructed field ditribution after locating the NV center');
 
     
 end

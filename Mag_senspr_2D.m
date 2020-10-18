@@ -1,8 +1,14 @@
-function [B,phi,phase,imaging]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,gamma,T2,I)
+function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,height,gamma,T2,I,J)
 %     N=Size/pixel;
     Conv=1000;
+    ub=9.274*10^(-24);
+    u=ub;%magnetism for spin 1/2 particle
+    pos_NVx=pos_NVx*int;
+    pos_NVy=pos_NVy*int;
     x=(1:N);
     x=x/Conv;%change into um
+    
+    
  if I==1
     %% set the lorenzian magnetic field profile (giant peak)
     B=zeros(N,N);
@@ -11,6 +17,8 @@ function [B,phi,phase,imaging]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,
              B(ii,jj)=B0/(1+((ii-N/2)*int/HW)^2)/(1+((jj-N/2)*int/HW)^2);
         end
     end
+    
+%% plot the field
     %     figure
     %     mesh(x,x,B);
     %     view(2)
@@ -21,8 +29,28 @@ function [B,phi,phase,imaging]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,
     %
  elseif I==2
      %% set the dipolar magnetic field profile  
-     B=0;zzz=30*int;
-     for num=1:length(pts)
+     BB=0;zzz=height*int;
+     NN=7; %multiple of points to overcome the finite size effect
+     val=zeros(N*NN);
+     
+     spacing=distance;
+     
+     if J==1
+         pts =squareGrid([0 0 NN*N NN*N], [NN*N/2 NN*N/2], [spacing,spacing]);  
+     elseif J==2
+         pts =triangleGrid([0 0 NN*N NN*N], [NN*N/2 NN*N/2], spacing);
+     elseif J==3
+         pts =hexagonalGrid([0 0 3*N 3*N], [3*N/2 3*N/2], spacing);
+     end
+     
+     %% plot
+     figure
+     scatter(pts(:,1),pts(:,2))
+     xlabel('x/um');
+     ylabel('y/um');
+     title('triangular superlattice');
+     
+     for num=1:length(pts(:,1))
          xc = pts(num,1)*int;
          yc = pts(num,2)*int;
          
@@ -35,24 +63,26 @@ function [B,phi,phase,imaging]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,
              end
          end
          
-         B=B+val;
+         BB=BB+val;
          
      end
-     BB=B(5*N+1:6*N,5*N+1:6*N);
-     figure
-     surf(x,y,BB')
-     
-     shading interp
-     view(2)
-     colorbar
-     xlabel('x/um');
-     ylabel('y/um');
-     title('magnetic field ditribution');
-     for ii=1:N
-         for jj=1:N
-             BB(ii,jj)=exp(1i*BB(ii,jj));
-         end
-     end
+     B=BB(3*N+1:4*N,3*N+1:4*N);% we take the middle points to overcome the finite size effect
+
+%% plot the field
+%      figure
+%      surf(x,y,BB')
+%      
+%      shading interp
+%      view(2)
+%      colorbar
+%      xlabel('x/um');
+%      ylabel('y/um');
+%      title('magnetic field ditribution');
+%      for ii=1:N
+%          for jj=1:N
+%              BB(ii,jj)=exp(1i*BB(ii,jj));
+%          end
+%      end
  end
  %% plotiong
     figure
@@ -84,20 +114,20 @@ function [B,phi,phase,imaging]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,
     ylabel('y/um');
     title('Phase ditribution');
 %% point loss
-    phase=zeros(length(phi(1,:)));
-    imaging=zeros(length(phi(1,:)));
-    AAA=pos_NVx(:); BBB=pos_NVy(:);
-    for ii=1:length(AAA)
-            phase(AAA(ii),BBB(ii))=phi(AAA(ii),BBB(ii));
-            imaging(AAA(ii),BBB(ii))=exp(1i*2*pi*phase(AAA(ii),BBB(ii)));
-    end
-    figure
-    surf(x,x,phase)
-    grid off
-    %shading interp
-    view(2)
-    hold off
-    xlabel('x/um');
-    ylabel('y/um');
-    title('field ditribution');
+%     phase=zeros(length(phi(1,:)));
+%     imaging=zeros(length(phi(1,:)));
+%     AAA=pos_NVx(:); BBB=pos_NVy(:);
+%     for ii=1:length(AAA)
+%             phase(AAA(ii),BBB(ii))=phi(AAA(ii),BBB(ii));
+%             imaging(AAA(ii),BBB(ii))=exp(1i*2*pi*phase(AAA(ii),BBB(ii)));
+%     end
+%     figure
+%     surf(x,x,phase)
+%     grid off
+%     %shading interp
+%     view(2)
+%     hold off
+%     xlabel('x/um');
+%     ylabel('y/um');
+%     title('field ditribution');
 end
