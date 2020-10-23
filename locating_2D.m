@@ -1,4 +1,4 @@
-function [X_r,Y_r,X_r1,Y_r1,phase]=locating_2D(ABS,PHA,n_spin,x,y)
+function [X_r,Y_r,X_r1,Y_r1,phase,non_pha]=locating_2D(ABS,PHA,n_spin,x,y)
     conv=1000;
     benchmark=0.7;
     [pks,X_r,Y_r] = findpeak_2D(ABS);
@@ -36,8 +36,10 @@ function [X_r,Y_r,X_r1,Y_r1,phase]=locating_2D(ABS,PHA,n_spin,x,y)
     
 %% plotting reconstructed field ditribution after locating the NV center
     phase=zeros(length(PHA));
+    non_pha=zeros(1,length(X_r)); % collect the nonzero phase at NV's location
     for ii=1:length(X_r)
             phase(X_r(ii),Y_r(ii))=PHA(X_r(ii),Y_r(ii));
+            non_pha(ii)=PHA(X_r(ii),Y_r(ii));
     end
     figure
     mesh(x,y,phase)

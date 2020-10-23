@@ -1,20 +1,20 @@
-function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,height,gamma,T2,I,J)
+function [BB,B,phi]=Mag_senspr_2D(N,mul,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,height,gamma,T2,I,J)
 %     N=Size/pixel;
     Conv=1000;
     ub=9.274*10^(-24);
     u=ub;%magnetism for spin 1/2 particle
     pos_NVx=pos_NVx*int;
     pos_NVy=pos_NVy*int;
-    x=(1:N);
+    x=(1:mul);
     x=x/Conv;%change into um
     
     
  if I==1
     %% set the lorenzian magnetic field profile (giant peak)
-    B=zeros(N,N);
-    for ii=1:N
-        for jj=1:N
-             B(ii,jj)=B0/(1+((ii-N/2)*int/HW)^2)/(1+((jj-N/2)*int/HW)^2);
+    B=zeros(mul,mul);
+    for ii=1:mul
+        for jj=1:mul
+             B(ii,jj)=B0/(1+((ii-mul/2)*int/HW)^2)/(1+((jj-mul/2)*int/HW)^2);
         end
     end
     
@@ -30,7 +30,10 @@ function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,heigh
  elseif I==2
      %% set the dipolar magnetic field profile  
      BB=0;zzz=height*int;
-     NN=7; %multiple of points to overcome the finite size effect
+     NN=11; %multiple of points to overcome the finite size effect
+     NN2=NN/2;
+     add=(mul)/N;
+     add2=add/2;
      val=zeros(N*NN);
      
      spacing=distance;
@@ -40,7 +43,7 @@ function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,heigh
      elseif J==2
          pts =triangleGrid([0 0 NN*N NN*N], [NN*N/2 NN*N/2], spacing);
      elseif J==3
-         pts =hexagonalGrid([0 0 3*N 3*N], [3*N/2 3*N/2], spacing);
+         pts =hexagonalGrid([0 0 NN*N NN*N], [NN*N/2 NN*N/2], spacing);
      end
      
      %% plot
@@ -66,9 +69,9 @@ function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,heigh
          BB=BB+val;
          
      end
-     B=BB(3*N+1:4*N,3*N+1:4*N);% we take the middle points to overcome the finite size effect
+     B=BB((NN2-add2)*N+1:(NN2+add2)*N,(NN2-add2)*N+1:(NN2+add2)*N);% we take the middle points to overcome the finite size effect
 
-%% plot the field
+    %% plot the field
 %      figure
 %      surf(x,y,BB')
 %      
@@ -84,7 +87,7 @@ function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,heigh
 %          end
 %      end
  end
- %% plotiong
+    %% plotiong
     figure
     hold on
     for ii=1:1:n_spin
@@ -97,10 +100,10 @@ function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,heigh
     ylabel('y/um');
     title('sensor ditribution');
     
-%%  Phase ditribution
-    phi=zeros(N);
-    for ii=1:N
-        for jj=1:N
+    %% Phase ditribution
+    phi=zeros(mul);
+    for ii=1:mul
+        for jj=1:mul
             %                              phi((ii-1)*n_read+jj)=exp(1i*2*pi*gamma*T2*B(num));
             phi(ii,jj)=gamma*T2*B(ii,jj);% initial phase
         end
@@ -113,7 +116,7 @@ function [B,phi]=Mag_senspr_2D(N,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,heigh
     xlabel('x/um');
     ylabel('y/um');
     title('Phase ditribution');
-%% point loss
+    %% point loss
 %     phase=zeros(length(phi(1,:)));
 %     imaging=zeros(length(phi(1,:)));
 %     AAA=pos_NVx(:); BBB=pos_NVy(:);
