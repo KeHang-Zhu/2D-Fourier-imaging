@@ -47,7 +47,7 @@ scanning_y=zeros(N_px,N_py,n_spin*n_spin);
  
 %% set the field at the sensor location (with wider region)
  mul=spacing*(max(N_px,N_py)-1)+N;
- %[W_BB,MB]=Mag_senspr_2D(N,mul,B0,HW,pos_NVx,pos_NVy,int,n_spin,period,height,gamma,T2,field,mode); 
+ [MB]=Mag_senspr_2D(N,mul,B0,HW,pos_NVx,pos_NVy,int,n_spin,period,height,gamma,T2,field,mode); 
  
  pos_x=pixel:pixel:N/1000;
  pos_y=pixel:pixel:N/1000;

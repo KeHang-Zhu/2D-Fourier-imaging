@@ -1,4 +1,4 @@
-function [BB,B,phi]=Mag_senspr_2D(N,mul,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,height,gamma,T2,I,J)
+function [B,phi]=Mag_senspr_2D(N,mul,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,height,gamma,T2,I,J)
 %     N=Size/pixel;
     Conv=1000;
     ub=9.274*10^(-24);
