@@ -86,7 +86,11 @@ function [B,phi]=Mag_senspr_2D(N,mul,B0,HW,pos_NVx,pos_NVy,int,n_spin,distance,h
 %              BB(ii,jj)=exp(1i*BB(ii,jj));
 %          end
 %      end
- end
+
+elseif I==3
+        r=10;%radius of skyrmion/4
+        [B]=skyrmion(mul,height,r);
+end
     %% plotiong
     figure
     hold on
